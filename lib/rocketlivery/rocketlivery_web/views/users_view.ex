@@ -6,12 +6,14 @@ defmodule RocketliveryWeb.UsersView do
     %{
       message: "user created succesfully",
       user: user
+    }
+  end
+
+  def render("show.json", %{user: %User{} = user}), do: %{user: user}
+end
       # user: %{
       #   id: user.id,
       #   name: user.name,
       #   address: user.address,
       #   email: user.email
       # }
-    }
-  end
-end

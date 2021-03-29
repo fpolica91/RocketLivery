@@ -11,4 +11,21 @@ defmodule RocketliveryWeb.UsersController do
       |>render("create.json", user: user)
     end
   end
+
+  def show(conn, %{"id" => id}) do
+    with {:ok, %User{} = user} <- Rocketlivery.get_by_id(id) do
+      conn
+      |>put_status(:ok)
+      |>render("show.json", user: user)
+    end
+  end
+
+  def delete(conn, %{"id" => id}) do
+    with {:ok, %User{}} <- Rocketlivery.delete_user(id) do
+      conn
+      |>put_status(:no_content)
+      |>text("")
+    end
+  end
+
 end
