@@ -12,6 +12,8 @@ defmodule RocketliveryWeb.Router do
     pipe_through :api
     get "/hello", WelcomeController, :index
     resources "/users", UsersController, except: [:new, :edit]
+
+    post "/items", ItemsController, :create
   end
 
   # Enables LiveDashboard only for development

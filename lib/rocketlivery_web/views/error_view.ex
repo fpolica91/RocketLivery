@@ -2,6 +2,7 @@ defmodule RocketliveryWeb.ErrorView do
   use RocketliveryWeb, :view
   alias Ecto.Changeset
 
+
   # If you want to customize a particular status code
   # for a certain format, you may uncomment below.
   # def render("500.json", _assigns) do
@@ -15,9 +16,7 @@ defmodule RocketliveryWeb.ErrorView do
     %{message: translate_errors(changeset)}
   end
 
-  def render("error.json", %{result: result}) do
-    %{message: result}
-  end
+  def render("error.json", %{result: result}), do: %{message: result}
 
 
   def template_not_found(template, _assigns) do
@@ -30,8 +29,11 @@ defmodule RocketliveryWeb.ErrorView do
   defp translate_errors(changeset) do
     Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
       Enum.reduce(opts, msg, fn {key, value}, acc ->
-        String.replace(acc, "%{#{key}}", to_string(value))
+        String.replace(acc, "%{#{key}}", translate(value))
       end)
     end)
   end
+
+  defp translate({:parameterized, Ecto.Enum, _map}), do: ""
+  defp translate(value), do: to_string(value)
 end

@@ -2,6 +2,7 @@ defmodule RocketliveryWeb.FallbackController do
   use RocketliveryWeb, :controller
   alias RocketliveryWeb.ErrorView
   alias Rocketlivery.Error
+
   def call(conn, {:error, %Error{status: status, result: result}}) do
     conn
     |>put_status(status)
