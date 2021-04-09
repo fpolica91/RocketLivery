@@ -2,6 +2,7 @@ defmodule Rocketlivery.User  do
   use Ecto.Schema
   import Ecto.Changeset
   alias Ecto.Changeset
+  alias Rocketlivery.Order
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @required_params [:address,:age,:cep,:email,:password, :name ]
@@ -16,6 +17,7 @@ defmodule Rocketlivery.User  do
     field :password_hash, :string
     field :password, :string, virtual: true
     field :name, :string
+    has_many :orders, Order
 
     timestamps()
   end
@@ -27,6 +29,7 @@ defmodule Rocketlivery.User  do
     |>unique_constraint([:cep])
     |>unique_constraint([:email])
     |>password_hash()
+
   end
 
   defp password_hash(%Changeset {valid?: true, changes: %{password: password}} = changeset) do
