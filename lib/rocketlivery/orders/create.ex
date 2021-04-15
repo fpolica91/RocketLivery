@@ -1,15 +1,29 @@
 defmodule Rocketlivery.Orders.Create do
   alias Rocketlivery.Orders.ValidateAndDuplicate
-  alias Rocketlivery.{Error, Order, Item, Repo}
+  alias Rocketlivery.{Error, Order, Item, Repo, OrderParams}
   import Ecto.Query
 
   def call(%{"items" => item_params} = params) do
+    is_valid = validate_items(item_params)
+    case is_valid do
+      true ->  {:error, Error.build(:bad_request, "Invalid quantity send")}
+      false -> build_order(params)
+    end
+  end
+
+  defp build_order(%{"items" => item_params} = params) do
     item_ids = Enum.map(item_params, fn item -> item["id"] end)
     query = from item in Item, where: item.id in ^item_ids
     query
     |>Repo.all()
     |>ValidateAndDuplicate.call(item_ids, item_params)
     |> handle_items(params)
+
+  end
+
+  defp validate_items(item_params) do
+    params = Enum.map(item_params, fn(item) -> OrderParams.changeset(item) end)
+    Enum.any?(params, fn(item) -> item.valid? == false end)
   end
 
   defp handle_items({:ok, items}, params) do
@@ -19,10 +33,14 @@ defmodule Rocketlivery.Orders.Create do
     |> handle_insert()
   end
 
-  defp handle_items({:error, result}, _params), do: {:error, Error.build(:baq_request, result)}
+  defp handle_items({:error, _error} = result, _params), do: result
+  # defp handle_items({:error, reason} = result, _params) do
+  #   # {:error, result} = result
+  #   {:error, Error.build(:bad_request, result)}
+  # end
 
   defp handle_insert({:ok, %Order{}} = order), do: order
-  defp handle_insert({:error, result}), do: {:error, Error.build(:baq_request, result)}
+  defp handle_insert({:error, result}), do: {:error, Error.build(:bad_request, result)}
 end
 
 

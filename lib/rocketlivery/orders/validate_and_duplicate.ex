@@ -1,4 +1,6 @@
 defmodule Rocketlivery.Orders.ValidateAndDuplicate do
+  alias Rocketlivery.Error
+
   def call(items, item_ids, item_params) do
     items_map = Map.new(items, fn item -> {item.id, item} end)
     item_ids
@@ -7,15 +9,15 @@ defmodule Rocketlivery.Orders.ValidateAndDuplicate do
     |>multiply_items(items_map, item_params)
   end
 
-  defp multiply_items(true, _items, _items_params), do: {:error, "Invalid ids"}
+  defp multiply_items(true, _items, _items_params), do: {:error, Error.item_not_found()}
 
   defp multiply_items(false, items, items_params) do
 
     items =
       # accumulator here is []
-      Enum.reduce(items_params, [], fn %{"id" => id, "quantiy" => quantiy}, acc ->
+      Enum.reduce(items_params, [], fn %{"id" => id, "quantity" => quantity}, acc ->
         item = Map.get(items, id)
-        acc++ List.duplicate(item, quantiy)
+        acc++ List.duplicate(item, quantity)
       end)
       {:ok, items}
   end

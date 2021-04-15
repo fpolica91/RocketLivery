@@ -5,9 +5,11 @@ defmodule Rocketlivery.Item  do
   alias Rocketlivery.Order
 
   @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
   @required_params [:category,:description,:price,:photo]
 
   @derive {Jason.Encoder, only: @required_params ++ [:id]}
+
 
   schema "items" do
     field :category, Enum, values: [:food, :drink, :dessert]

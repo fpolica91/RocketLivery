@@ -8,7 +8,7 @@ defmodule Rocketlivery.Order  do
   @foreign_key_type :binary_id
   @required_params [:address,:comments, :payment_method, :user_id]
   @payment_method [:cash, :debit_card, :credit_card]
-  @derive {Jason.Encoder, only: @required_params ++ [:id]}
+  @derive {Jason.Encoder, only: @required_params ++ [:id, :items]}
 
   schema "orders" do
     field :address, :string
@@ -19,6 +19,8 @@ defmodule Rocketlivery.Order  do
     belongs_to :user, User
     timestamps()
   end
+
+
 
   def changeset(struct \\ %__MODULE__{}, params, items) do
     struct
