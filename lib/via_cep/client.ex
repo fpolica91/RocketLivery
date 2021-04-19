@@ -4,6 +4,7 @@ defmodule Rocketlivery.ViaCep.Client do
   alias Rocketlivery.Error
   plug Tesla.Middleware.BaseUrl, "https://viacep.com.br/ws/"
   plug Tesla.Middleware.JSON
+  alias Rocketlivery.{ValidatedCep, Repo}
 
   def get_cep_info(cep) do
     "#{cep}/json/"
@@ -20,7 +21,13 @@ defmodule Rocketlivery.ViaCep.Client do
   end
 
   defp handle_get({:ok, %Env{status: 200, body: body}}) do
-    {:ok, body}
+    {:ok, %ValidatedCep{} = result} = ValidatedCep.changeset(%{localidade: body["localidade"], cep: body["cep"] })
+    |>Repo.insert()
+    {:ok, result}
+    # {:ok, %{
+    #   localidade: body["localidade"],
+    #   cep: body["cep"]
+    # }}
   end
   defp handle_get({:error, reason}) do
     {:error, Error.build(:bad_request, reason)}
