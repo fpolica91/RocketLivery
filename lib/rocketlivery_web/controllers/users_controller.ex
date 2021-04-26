@@ -1,14 +1,16 @@
 defmodule RocketliveryWeb.UsersController do
   use RocketliveryWeb, :controller
   alias Rocketlivery.User
-  alias RocketliveryWeb.FallbackController
+  alias RocketliveryWeb.{FallbackController, Auth.Guardian}
 
   action_fallback FallbackController
   def create(conn, params) do
-    with {:ok, %User{} = user} <- Rocketlivery.create_user(params) do
+    with {:ok, %User{} = user} <- Rocketlivery.create_user(params),
+         {:ok, token, _claims} <- Guardian.encode_and_sign(user)
+     do
       conn
       |>put_status(:created)
-      |>render("create.json", user: user)
+      |>render("create.json", token: token, user: user)
     end
   end
 
@@ -19,6 +21,16 @@ defmodule RocketliveryWeb.UsersController do
       |>render("show.json", user: user)
     end
   end
+
+  def sign_in(conn, params) do
+    with {:ok, token} <- Guardian.authenticate(params) do
+      conn
+      |>put_status(:ok)
+      |>render("auth.json", token: token)
+    end
+  end
+
+
 
   def update(conn, params) do
     with {:ok, %User{} = user} <- Rocketlivery.update_user(params) do

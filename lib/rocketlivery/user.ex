@@ -35,7 +35,7 @@ defmodule Rocketlivery.User  do
   end
 
   defp password_hash(%Changeset {valid?: true, changes: %{password: password}} = changeset) do
-    change(changeset, Bcrypt.add_hash(password))
+    change(changeset, Pbkdf2.add_hash(password))
   end
 
   defp password_hash(changeset), do: changeset
