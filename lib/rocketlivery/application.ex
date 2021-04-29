@@ -14,7 +14,9 @@ defmodule Rocketlivery.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Rocketlivery.PubSub},
       # Start the Endpoint (http/https)
-      RocketliveryWeb.Endpoint
+      RocketliveryWeb.Endpoint,
+
+      Rocketlivery.Orders.ReportRunner
       # Start a worker by calling: Rocketlivery.Worker.start_link(arg)
       # {Rocketlivery.Worker, arg}
     ]
