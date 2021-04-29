@@ -5,6 +5,7 @@ defmodule RocketliveryWeb.OrdersController do
 
   action_fallback FallbackController
   def create(conn, params) do
+    IO.inspect(params, label: "PARAMS")
     with {:ok, %Order{} = order} <- Rocketlivery.create_order(params) do
       conn
       |>put_status(:created)

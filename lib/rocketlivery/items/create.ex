@@ -1,6 +1,7 @@
 defmodule Rocketlivery.Items.Create do
   alias Rocketlivery.{Error, Item, Repo}
   def call(params) do
+    IO.inspect(params, label: "PARAMS")
     params
     |>Item.changeset()
     |>Repo.insert()
@@ -13,3 +14,9 @@ defmodule Rocketlivery.Items.Create do
 
 
 end
+#  params = %{
+# 	"category": "food",
+# 	"description": "lasagna",
+# 	"price": "29.99",
+# 	"photo": "/photos/vegan-pizza.jpg"
+# }
